@@ -620,6 +620,7 @@ DONE:
 
 CUresult cuMemAllocManaged(CUdeviceptr *dptr, size_t bytesize,
                            unsigned int flags) {
+    printf("cuMemAllocManaged called\n");
   size_t used = 0;
   size_t request_size = bytesize;
   CUresult ret;
@@ -634,15 +635,15 @@ CUresult cuMemAllocManaged(CUdeviceptr *dptr, size_t bytesize,
   }
 
   ret = CUDA_ENTRY_CALL(cuda_library_entry, cuMemAllocManaged, dptr, bytesize,
-                        flags);
+                        );
 DONE:
   return ret;
 }
 
 CUresult cuMemAlloc_v2(CUdeviceptr *dptr, size_t bytesize) {
-  size_t used = 0;
-  size_t request_size = bytesize;
-  CUresult ret;
+    printf("cuMemAlloc_v2 called\n");
+    size_t used = 0;
+    size_t request_sizCUresult ret;
 
   if (g_vcuda_config.enable) {
     atomic_action(pid_path, get_used_gpu_memory, (void *)&used);
@@ -653,12 +654,14 @@ CUresult cuMemAlloc_v2(CUdeviceptr *dptr, size_t bytesize) {
     }
   }
 
-  ret = CUDA_ENTRY_CALL(cuda_library_entry, cuMemAlloc_v2, dptr, bytesize);
+  ret = CUDA_ENTRY_CALL(cuda_library_entry, cuMemAllocManaged, dptr, bytesize,
+                        CU_MEM_ATTACH_GLOBAL);
 DONE:
   return ret;
 }
 
 CUresult cuMemAlloc(CUdeviceptr *dptr, size_t bytesize) {
+  printf("cuMemAlloc called\n");
   size_t used = 0;
   size_t request_size = bytesize;
   CUresult ret;
@@ -666,13 +669,15 @@ CUresult cuMemAlloc(CUdeviceptr *dptr, size_t bytesize) {
   if (g_vcuda_config.enable) {
     atomic_action(pid_path, get_used_gpu_memory, (void *)&used);
 
+    //
     if (unlikely(used + request_size > g_vcuda_config.gpu_memory)) {
       ret = CUDA_ERROR_OUT_OF_MEMORY;
       goto DONE;
     }
   }
 
-  ret = CUDA_ENTRY_CALL(cuda_library_entry, cuMemAlloc, dptr, bytesize);
+  ret = CUDA_ENTRY_CALL(cuda_library_entry, cuMemAllocManaged, dptr, bytesize,
+                        CU_MEM_ATTACH_GLOBAL);
 DONE:
   return ret;
 }
@@ -680,6 +685,7 @@ DONE:
 CUresult cuMemAllocPitch_v2(CUdeviceptr *dptr, size_t *pPitch,
                             size_t WidthInBytes, size_t Height,
                             unsigned int ElementSizeBytes) {
+    printf("cuMemAllocPitch_v2 called\n");
   size_t used = 0;
   size_t request_size = ROUND_UP(WidthInBytes * Height, ElementSizeBytes);
   CUresult ret;
@@ -701,6 +707,7 @@ DONE:
 
 CUresult cuMemAllocPitch(CUdeviceptr *dptr, size_t *pPitch, size_t WidthInBytes,
                          size_t Height, unsigned int ElementSizeBytes) {
+    printf("cuMemAllocPitch called\n");
   size_t used = 0;
   size_t request_size = ROUND_UP(WidthInBytes * Height, ElementSizeBytes);
   CUresult ret;

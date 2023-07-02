@@ -2361,6 +2361,10 @@ typedef enum CUflushGPUDirectRDMAWritesScope_enum {
              contexts. */
 } CUflushGPUDirectRDMAWritesScope;
 
+typedef enum CUmemAttach_flags_enum {
+    CU_MEM_ATTACH_GLOBAL = 0x1
+} CUmemAttach_flags;
+
 #ifdef __cplusplus
 }
 #endif

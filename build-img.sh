@@ -5,7 +5,7 @@ set -o nounset
 set -o xtrace
 
 ROOT=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd -P)
-IMAGE_FILE=${IMAGE_FILE:-"tkestack.io/gaia/vcuda:latest"}
+IMAGE_FILE=${IMAGE_FILE:-"lzxcn/vcuda:latest"}
 
 function cleanup() {
     rm -rf ${ROOT}/cuda-control.tar
@@ -24,7 +24,7 @@ function build_img() {
     cp ${ROOT}/Dockerfile ${ROOT}/build
     (
       cd ${ROOT}/build
-      docker build ${BUILD_FLAGS:-} --build-arg version=${version} --build-arg commit=${commit} -t ${IMAGE_FILE} .
+      docker build --no-cache ${BUILD_FLAGS:-} --build-arg version=${version} --build-arg commit=${commit} -t ${IMAGE_FILE} .
     )
 }
 
